@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`button clicks 1`] = `
+<div>
+  search
+  <input
+    name="search"
+    onChange={[Function]}
+    type="text"
+    value=""
+  />
+  <button
+    onClick={[Function]}
+  >
+     reset 
+  </button>
+  stoked:
+  <input
+    checked={false}
+    name="isStocked"
+    onChange={[Function]}
+    type="checkbox"
+  />
+  <p>
+    sort by 
+  </p>
+  <select
+    name="sort"
+    onChange={[Function]}
+    value="name"
+  >
+    <option
+      value="name"
+    >
+      name
+    </option>
+    <option
+      value="price"
+    >
+      price
+    </option>
+  </select>
+  <ul />
+  <div>
+    category:
+    <input
+      name="category"
+      onChange={[Function]}
+      type="text"
+      value=""
+    />
+    price:
+    <input
+      name="price"
+      onChange={[Function]}
+      type="text"
+      value=""
+    />
+    stocked:
+    <input
+      checked={false}
+      name="stocked"
+      onChange={[Function]}
+      type="checkbox"
+    />
+    name:
+    <input
+      name="name"
+      onChange={[Function]}
+      type="text"
+      value=""
+    />
+    <input
+      onClick={[Function]}
+      type="button"
+      value="add good"
+    />
+  </div>
+</div>
+`;
