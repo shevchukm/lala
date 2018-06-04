@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import GoodsList from './GoodsList';
+import GoodsList from './goods/GoodsList';
 
 /**
  * A main class

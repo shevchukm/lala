@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+import {getGoods, deleteGoods } from '../actions/actionsGoods';
 import AddGood from './AddGood';
+import ActionBar from './ActionBar';
 
 class GoodsList extends Component {
     constructor(props) {
@@ -11,17 +12,11 @@ class GoodsList extends Component {
             isStocked: false,
             sort: 'name'
         };
+
     }
   
     componentDidMount() {
-        this.getGoods();
-    }
-
-    getGoods = () =>{
-        Axios.get('http://localhost:3012/goods')
-            .then(res =>{
-                this.setState({goods: res.data});
-            });
+        getGoods().then(res => this.setState({goods: res.data}));
     }
   
     handleFilters = (e) => {
@@ -35,8 +30,14 @@ class GoodsList extends Component {
     
     }
 
-    handleClick = () => {
+    handleReset = () => {
         this.setState({search: ''});
+    }
+
+    handleDelete = (name) => {
+        deleteGoods(name).then(() => {
+            getGoods().then(res => this.setState({goods: res.data}));
+        });
     }
 
     render() {
@@ -48,41 +49,27 @@ class GoodsList extends Component {
 
         filteredGoods = filteredGoods.sort(this.sortOrder).map((good, index) =>
             good.stocked ?
-                <li key={index}> {good.name} -- {good.price} </li>
+                <li key={index}> {good.name} -- {good.price} 
+                    <button type="button"
+                     onClick={() => this.handleDelete(good.name)}> delete</button> </li>
                 :<li key={index} 
                     style={{color: 'red'}}>
-                    {good.name} -- {good.price} </li>
+                    {good.name} -- {good.price}
+                    <button type="button"
+                     onClick={() => this.handleDelete(good.name)}> delete</button>  
+                </li>
         );
 
         return(
             <div>
-                search
-                <input
-                    value={this.state.search}
-                    name = "search"
-                    onChange={this.handleFilters}
-                    type="text" />
-                <button
-                    onClick = {this.handleClick} > reset </button>
-                stoked:
-                <input
-                    type="checkbox"
-                    name = "isStocked"
-                    checked={this.state.isStocked}
-                    onChange={this.handleFilters} />
-                <p>sort by </p>
-                <select 
-                    name = "sort"
-                    onChange={this.handleFilters}
-                    value={this.state.sort}>
-                    <option value="name">name</option>
-                    <option value="price">price</option>
-                </select>
-
-                <ul>
-                    {filteredGoods}
-                </ul>
+                <ActionBar
+                    state={this.state}
+                    handleFilters={this.handleFilters}
+                    sortOrder={this.sortOrder}
+                    handleReset={this.handleReset}
+                />
                 
+                <ul>{filteredGoods}</ul>
                 <AddGood update={this.getGoods} />
             </div>
         );
