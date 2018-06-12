@@ -1,6 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { BrowserRouter } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
+import user from './reducers/user';
 import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore(user);
+
+ReactDOM.render(
+    React.createElement(Provider, { store }, React.createElement(BrowserRouter, null, React.createElement(App))),
+    document.getElementById('root')
+);

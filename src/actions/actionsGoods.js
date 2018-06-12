@@ -1,9 +1,9 @@
-import Axios from 'axios';
+import axios from 'axios';
 
-export const getGoods = () =>{
-    return Axios.get('http://localhost:3012/goods');
-};
+// const token = sessionStorage.getItem('token');
 
-export const deleteGoods = (name) =>{
-    return Axios.delete('http://localhost:3012/goods', {data: {name: name}});
-};
+export const getGoods = () => axios.get('http://localhost:3012/goods');
+
+export const deleteGoods = name => axios.delete('http://localhost:3012/goods', { data: { name } });
+
+export const addGood = good => axios.post('http://localhost:3012/goods', good);
