@@ -4,10 +4,10 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { BrowserRouter } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
-import user from './reducers/user';
+import goods from './reducers/goods';
 import App from './App';
 
-const store = createStore(user);
+const store = createStore(goods);
 
 ReactDOM.render(
     React.createElement(Provider, { store }, React.createElement(BrowserRouter, null, React.createElement(App))),

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {Input, Button, Checkbox, Icon, Container, Header, Message } from 'semantic-ui-react'
-import { addGood } from '../actions/actionsGoods';
+import {Input, Button, Checkbox, Icon, Container, Header, Message, Divider } from 'semantic-ui-react'
+import { addGood } from '../api/actionsGoods';
+import SubmitButtons from '../shared/SubmitButtons';
 
 const initState = {
     category: '',
@@ -28,6 +29,11 @@ class AddGood extends Component {
             .then(() =>  this.setState(initState))
             .catch(err => this.setState({error: err}));
     }
+
+    handleReset = () => {
+        this.setState(initState);
+    };
+
     render() {
         return (
             <Container>
@@ -41,8 +47,7 @@ class AddGood extends Component {
                     <Icon name="tag" />
                     <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Input
                     iconPosition='left'
                     placeholder='price'
@@ -52,8 +57,7 @@ class AddGood extends Component {
                     <Icon name='money bill alternate outline' />
                     <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Input
                     iconPosition='left'
                     placeholder='name'
@@ -61,19 +65,16 @@ class AddGood extends Component {
                     name="name"
                     onChange={this.handleChange} >
                     <Icon name='address card outline' />
-                        <input />
+                    <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Checkbox
                     toggle
                     checked={this.state.stocked}
                     name="stocked"
                     onChange={this.handleChange}
-                    label="Stocked"
-                />
-                <br />
-                <br />
+                    label="Stocked" />
+                <Divider hidden />
                 { this.state.error ?
                     <Message warning compact>
                         <Message.Header>Error has occured on loading goods</Message.Header>
@@ -81,12 +82,10 @@ class AddGood extends Component {
                         <Button onClick={this.handleCreate}>try again</Button>
                     </Message>
                     :
-                    <Button.Group>
-                        <Button onClick={this.handleReset}>Cancel</Button>
-                        <Button.Or />
-                        <Button onClick={this.handleCreate}
-                            positive>Add good</Button>
-                    </Button.Group>
+                    <SubmitButtons
+                        onHandleSubmit={this.handleCreate}
+                        onHandleReset={this.handleReset}
+                        submitName = 'Add good' />
                 }
             </Container>
         );

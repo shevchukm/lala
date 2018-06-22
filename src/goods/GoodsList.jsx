@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { getGoods, deleteGoods } from '../actions/actionsGoods';
+import { connect } from 'react-redux';
+import { Message, Button, Container } from 'semantic-ui-react';
+import { getGoods, deleteGoods, getCart } from '../api/actionsGoods';
 import FilterBar from './FiltersBar';
-import { Table, Message, Button, Container, Icon } from 'semantic-ui-react';
+import ItemsList from '../shared/ItemsList';
 
 class GoodsList extends Component {
     constructor(props) {
@@ -21,12 +23,16 @@ class GoodsList extends Component {
     };
 
     getGoods = () => {
-        getGoods().then(res => this.setState({goods: res.data, error: ''}))
+        getGoods().then(res => {
+            this.setState({ goods: res.data, error: '' });
+        })
         .catch(err => this.setState({ error: err }));
     };
   
     handleFilters = (event, data) => {
+
         const { name, value, type } = data;
+        
         if (type === 'checkbox') {
             this.setState({ [name]: !this.state[name] });
         } else { this.setState({ [name]: value });}
@@ -43,40 +49,38 @@ class GoodsList extends Component {
         this.setState({search: ''});
     };
 
-    handleDelete = (name) => {
-        deleteGoods(name).then(() => { this.getGoods(); })
-        .catch(err => this.setState({ error: err.response.data }));
+    handleDelete = id => {
+        deleteGoods(id)
+            .then(() => this.getGoods())
+            .catch(err => this.setState({ error: err.response.data }));
+    };
+
+
+    handleAddToCart = good => {
+        const cart = getCart();
+        const item = cart.find(item => item._id === good._id);
+        if (item) {
+            item.count++
+        } else {
+            good.count = 1;
+            cart.push(good);
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        this.props.setGoodsCount(this.props.getGoodsCount + 1);
     };
 
     render() {
-        let filteredGoods = this.state.goods.filter((good) =>
-            this.state.isStocked ?
-                good.name.toLowerCase().includes(this.state.search.toLowerCase()) && good.stocked === false :
-                good.name.toLowerCase().includes(this.state.search.toLowerCase())
+        const { isStocked, search, goods } = this.state;
+
+        const searchStoked = (name, search) => name.toLowerCase().includes(search);
+        
+        let filteredGoods = goods.filter(({name, stocked}) =>
+            isStocked ?
+                searchStoked(name, search) && stocked === true :
+                searchStoked(name, search)
         );
 
-        filteredGoods = filteredGoods.sort(this.sortOrder).map((good, index) =>
-                <Table.Row key={index}>
-                    <Table.Cell>
-                        {good.name}  
-                    </Table.Cell >
-                    <Table.Cell>
-                        {good.price}
-                    </Table.Cell>
-                    <Table.Cell>
-                        {good.category}
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Button type="button"
-                                onClick={() => this.handleDelete(good.name)}
-                                icon
-                                color="red">
-                            <Icon name='delete' />
-                        </Button>
-                    </Table.Cell>
-                </Table.Row >
-
-        );
+        filteredGoods = filteredGoods.sort(this.sortOrder);
 
         return(
             <Container>
@@ -87,30 +91,30 @@ class GoodsList extends Component {
                     handleReset={this.handleReset}
                 />
                 
-                <Table basic='very' celled collapsing>
-                    <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Name</Table.HeaderCell>
-                        <Table.HeaderCell>Price</Table.HeaderCell>
-                        <Table.HeaderCell>Delete</Table.HeaderCell>
-                        <Table.HeaderCell>Category</Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
+                <ItemsList 
+                    headers={['Id', 'Category', 'Price','Stock','Name','Delete']}
+                    items={filteredGoods}
+                    onHandleDelete={this.handleDelete}
+                    onHandleAddToCart={this.handleAddToCart}
+                />
 
-                    <Table.Body>
-                    {filteredGoods}
-                    </Table.Body>
-                </Table>
                 { this.state.error &&
-                <Message warning compact>
-                    <Message.Header>Error has occured</Message.Header>
-                    <p>{this.state.error.toString()}</p>
-                    <Button onClick={this.getGoods}>try again</Button>
-                </Message>
+                    <Message warning compact>
+                        <Message.Header>Error has occured</Message.Header>
+                        <p>{this.state.error.toString()}</p>
+                        <Button onClick={this.getGoods}>try again</Button>
+                    </Message>
                 }
             </Container>
         );
     }
 }
 
-export default GoodsList;
+export default connect(   
+    state => ({
+        getGoodsCount: state.goodsCount
+    }),
+    dispatch =>({
+        setGoodsCount: count => dispatch({type:"SET_COUNT_GOODS", payload: count})
+    })
+)(GoodsList);

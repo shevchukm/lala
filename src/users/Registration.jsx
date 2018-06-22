@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Icon, Input, Container, Header, Button, Message } from 'semantic-ui-react';
-import { create } from '../actions/actionsUsers';
+import { Icon, Input, Container, Header, Message, Divider } from 'semantic-ui-react';
+import { create } from '../api/actionsUsers';
+import SubmitButtons from '../shared/SubmitButtons';
 
 const initState = { 
     user: {
@@ -18,8 +19,8 @@ class Registration extends Component {
         this.state = initState;
     }
 
-    handleChange = event => {
-        const { name, value } = event.target;
+    handleChange = (event, data) => {
+        const { name, value } = data;
 
         if (name === 'password2') {
             this.setState({ [name]: value });
@@ -37,8 +38,11 @@ class Registration extends Component {
 
     handleReg = () => {
         create(this.state.user)
-            .then( this.handleReset())
-            .catch(this.setState({error: 'some problems with conection'}));
+            .then(res => {
+                this.handleReset();
+                this.setState({error: res.data})
+            })
+            .catch(err => this.setState({error: err.data || 'problems with conection'}));
     };
 
     render() {
@@ -47,54 +51,48 @@ class Registration extends Component {
                 <Header>REGISTRATION</Header>
                 <Input
                     iconPosition="left"
-                    placeholder="Email">
+                    placeholder="Email"
+                    name="email"
+                    value={this.state.user.email}
+                    onChange = {this.handleChange} >
                     <Icon name="at" />
-                    <input
-                        name="email"
-                        value={this.state.user.email}
-                        onChange = {this.handleChange} />
+                    <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Input iconPosition='left'
-                    placeholder='name'>
+                    placeholder='name'
+                    name="name"
+                    value={this.state.user.name}
+                    onChange = {this.handleChange} >
                     <Icon name='user' />
-                    <input
-                        name="name"
-                        value={this.state.user.name}
-                        onChange = {this.handleChange} />
+                    <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Input iconPosition='left'
                     placeholder='password'
-                    type="password">
+                    type="password"
+                    name="password"
+                    value={this.state.user.password}
+                    onChange = {this.handleChange}>
                     <Icon name='lock' />
-                    <input
-                        name="password"
-                        value={this.state.user.password}
-                        onChange = {this.handleChange} />
+                    <input />
                 </Input>
-                <br />
-                <br />
+                <Divider hidden />
                 <Input iconPosition='left'
                     placeholder='confirm password'
-                    type="password">
+                    type="password"
+                    name="password2"
+                    value={this.state.password2}
+                    onChange = {this.handleChange}>
                     <Icon name='lock' />
-                    <input
-                        name="password2"
-                        value={this.state.password2}
-                        onChange = {this.handleChange} />
+                    <input />
                 </Input>
-                <br />
-                <br />
-                <Button.Group>
-                    <Button onClick={this.handleReset}>Cancel</Button>
-                    <Button.Or />
-                    <Button onClick={this.handleReg}
-                        positive>Registrate</Button>
-                </Button.Group>
-                <br />
+                <Divider hidden />
+                <SubmitButtons
+                    onHandleSubmit={this.handleReg}
+                    onHandleReset={this.handleReset}
+                    submitName = 'Registrate' />
+                <Divider hidden />
                 { this.state.error &&
                     <Message warning compact>
                         <Message.Header>Error had occured</Message.Header>

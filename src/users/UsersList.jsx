@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { getAll, deleteOne } from '../actions/actionsUsers';
-import { Table, Container, Button, Icon, Message } from 'semantic-ui-react';
+import { Container, Message } from 'semantic-ui-react';
+import { getAll, deleteOne } from '../api/actionsUsers';
+import ItemsList from '../shared/ItemsList';
 
 class UserList extends Component {
     constructor(props) {
@@ -17,7 +18,8 @@ class UserList extends Component {
     };
 
     getAll = () => {
-        getAll().then(res => this.setState({ users: res.data }))
+        getAll()
+        .then(res => this.setState({ users: res.data }))
         .catch(()=>this.setState({error: 'some problems with connection'}));
     };
 
@@ -27,44 +29,13 @@ class UserList extends Component {
     };
 
     render() {
-        const users = this.state.users.map( user =>
-                <Table.Row key={user.id}>
-                    <Table.Cell>
-                        {user.id}
-                    </Table.Cell>
-                    <Table.Cell>
-                        {user.name}  
-                    </Table.Cell >
-                    <Table.Cell>
-                        {user.email}
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Button type="button"
-                                onClick={() => this.handleDelete(user.id)}
-                                icon
-                                color="red">
-                            <Icon name='delete' />
-                        </Button>
-                    </Table.Cell>
-                </Table.Row >
-
-        );
-
         return(
             <Container>        
-                <Table basic='very' celled collapsing>
-                    <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Id</Table.HeaderCell>
-                        <Table.HeaderCell>Name</Table.HeaderCell>
-                        <Table.HeaderCell>Email</Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
+                <ItemsList 
+                    headers={['ID', 'Name', 'Email','Email comfirmed' ,'Delete']}
+                    items={this.state.users}
+                    onHandleDelete={this.handleDelete}/>
 
-                    <Table.Body>
-                    {users}
-                    </Table.Body>
-                </Table>
                 { this.state.error &&
                     <Message warning compact>
                         <Message.Header>Error has occured</Message.Header>
