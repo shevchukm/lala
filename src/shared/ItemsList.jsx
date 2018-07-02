@@ -1,6 +1,5 @@
 import React from 'react';
 import { Table, Button, Icon} from 'semantic-ui-react';
-import { token } from '../api/actionsUsers';
 
 const ItemsList = props => {
     

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon, Input, Container, Header, Message, Divider} from 'semantic-ui-react';
 import { login } from '../api/actionsUsers';
+import { getCart, countGoods } from '../api/actionsGoods';
 import SubmitButtons from '../shared/SubmitButtons';
 
 const initState = { 
@@ -86,7 +87,7 @@ class Login extends Component {
 
 export default connect(
     null,
-    dispatch => ({
-        setUser: user => dispatch({type: 'SET_USER', payload: user})
+    dispatch =>({
+        setGoodsCount: count => dispatch({type:"SET_COUNT_GOODS", payload: count})
     })
 )(Login);
